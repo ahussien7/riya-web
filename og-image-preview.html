@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riya OG Image Preview — 1200x630</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0F0F0F;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 24px 60px;
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    .header {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+    }
+
+    .header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 3px;
+    }
+
+    .save-note {
+      background: rgba(79,70,229,0.18);
+      border: 1px solid rgba(79,70,229,0.4);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.5;
+    }
+
+    .save-note strong {
+      color: #818CF8;
+      font-weight: 600;
+    }
+
+    /* The OG image frame — exact 1200x630 */
+    .og-frame {
+      width: 1200px;
+      height: 630px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 24px 80px rgba(0,0,0,0.6);
+    }
+
+    /* ── Background ── */
+    .og-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1E1B4B 0%, #3730A3 50%, #4F46E5 100%);
+    }
+
+    /* Top radial glow */
+    .og-glow-top {
+      position: absolute;
+      width: 1400px;
+      height: 680px;
+      top: -280px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, #4F46E5 0%, transparent 65%);
+      opacity: 0.45;
+    }
+
+    /* Bottom-right radial glow */
+    .og-glow-br {
+      position: absolute;
+      width: 1000px;
+      height: 560px;
+      bottom: -280px;
+      right: -200px;
+      background: radial-gradient(ellipse at center, #4338CA 0%, transparent 65%);
+      opacity: 0.22;
+    }
+
+    /* Floating orbs */
+    .og-orb {
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .og-orb-1 {
+      width: 560px;
+      height: 560px;
+      top: -120px;
+      left: -120px;
+      background: #6366F1;
+      opacity: 0.14;
+      filter: blur(80px);
+    }
+
+    .og-orb-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      right: -60px;
+      background: #818CF8;
+      opacity: 0.12;
+      filter: blur(60px);
+    }
+
+    .og-orb-3 {
+      width: 320px;
+      height: 320px;
+      top: 60px;
+      right: 180px;
+      background: #A5B4FC;
+      opacity: 0.07;
+      filter: blur(50px);
+    }
+
+    .og-orb-4 {
+      width: 360px;
+      height: 360px;
+      bottom: -80px;
+      left: 80px;
+      background: #6366F1;
+      opacity: 0.09;
+      filter: blur(60px);
+    }
+
+    /* ── Logo container ── */
+    .og-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .og-logo-wrap {
+      width: 200px;
+      height: 200px;
+      border-radius: 45px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 34px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        0 1px 0 rgba(255,255,255,0.12) inset,
+        0 8px 40px rgba(0,0,0,0.30),
+        0 32px 80px rgba(0,0,0,0.20);
+    }
+
+    .og-logo-bg {
+      position: absolute;
+      inset: 0;
+      background: #4F46E5;
+    }
+
+    .og-logo-sheen {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .og-logo-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Wordmark ── */
+    .og-wordmark {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      font-size: 52px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 14px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      /* push right by half letter-spacing to visually center */
+      padding-left: 14px;
+    }
+
+    /* ── Tagline ── */
+    .og-tagline {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.60);
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Instructions below the image ── */
+    .instructions {
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 28px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .step {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+
+    .step-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: #818CF8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .step-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.5;
+    }
+
+    .step-text strong {
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+    }
+
+    .dim {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .dim-badge {
+      display: inline-block;
+      background: rgba(79,70,229,0.2);
+      border: 1px solid rgba(79,70,229,0.35);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #818CF8;
+      letter-spacing: 0.2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1>Riya OG Image — Payment Link Preview</h1>
+      <p>Renders at exact 1200×630px for iMessage, WhatsApp, Slack, Twitter/X card previews</p>
+    </div>
+    <div class="save-note">
+      To export PNG: <strong>right-click the image below → "Save Image As…"</strong><br>
+      Or: open DevTools → Screenshot node → export
+    </div>
+  </div>
+
+  <!-- The actual 1200x630 OG image, rendered at true size -->
+  <div class="og-frame" id="og-image">
+
+    <!-- Background layers -->
+    <div class="og-bg"></div>
+    <div class="og-glow-top"></div>
+    <div class="og-glow-br"></div>
+    <div class="og-orb og-orb-1"></div>
+    <div class="og-orb og-orb-2"></div>
+    <div class="og-orb og-orb-3"></div>
+    <div class="og-orb og-orb-4"></div>
+
+    <!-- Centered content -->
+    <div class="og-content">
+
+      <!-- Logo icon -->
+      <div class="og-logo-wrap">
+        <div class="og-logo-bg"></div>
+        <div class="og-logo-sheen"></div>
+        <svg class="og-logo-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Flag decorations -->
+          <g opacity="0.30">
+            <!-- US flag -->
+            <g transform="translate(20,24) rotate(-5) scale(2)">
+              <rect width="7" height="4.5" rx=".5" fill="#3C3B6E"/>
+              <rect y="1.5" width="7" height=".8" fill="#B22234"/>
+              <rect y="3" width="7" height=".8" fill="#B22234"/>
+            </g>
+            <!-- EU flag -->
+            <g transform="translate(110,14) rotate(3) scale(2)">
+              <rect width="7" height="4.5" rx=".5" fill="#003399"/>
+              <circle cx="3.5" cy="2.25" r="1" fill="#FFCC00"/>
+            </g>
+            <!-- Japan flag -->
+            <g transform="translate(176,30) rotate(8) scale(2)">
+              <rect width="7" height="4.5" rx=".5" fill="white"/>
+              <circle cx="3.5" cy="2.25" r="1.2" fill="#BC002D"/>
+            </g>
+            <!-- India flag -->
+            <g transform="translate(14,70) rotate(-12) scale(2)">
+              <rect width="7" height="1.5" fill="#FF9933"/>
+              <rect y="1.5" width="7" height="1.5" fill="#FFF"/>
+              <rect y="3" width="7" height="1.5" fill="#138808"/>
+            </g>
+            <!-- UK flag -->
+            <g transform="translate(184,110) rotate(5) scale(2)">
+              <rect width="7" height="4.5" rx=".5" fill="#00247D"/>
+              <path d="M0 0L7 4.5M7 0L0 4.5" stroke="white" stroke-width=".6"/>
+            </g>
+            <!-- Mexico flag -->
+            <g transform="translate(40,176) rotate(-8) scale(2)">
+              <rect width="2.3" height="4.5" fill="#006847"/>
+              <rect x="2.3" width="2.4" height="4.5" fill="#FFF"/>
+              <rect x="4.7" width="2.3" height="4.5" fill="#CE1126"/>
+            </g>
+            <!-- Germany flag -->
+            <g transform="translate(150,180) rotate(10) scale(2)">
+              <rect width="7" height="1.5" fill="#000"/>
+              <rect y="1.5" width="7" height="1.5" fill="#DD0000"/>
+              <rect y="3" width="7" height="1.5" fill="#FFCE00"/>
+            </g>
+            <!-- France flag -->
+            <g transform="translate(80,184) rotate(-3) scale(2)">
+              <rect width="2.3" height="4.5" fill="#0055A4"/>
+              <rect x="2.3" width="2.4" height="4.5" fill="#FFF"/>
+              <rect x="4.7" width="2.3" height="4.5" fill="#EF4135"/>
+            </g>
+          </g>
+          <!-- R letter (scaled 2x from 100x100 original) -->
+          <path d="M56 44V156H92V110H104L132 156H170L136 100C152 92 160 76 160 60C160 44 144 36 120 36H56ZM92 68H120C124 68 128 70 128 74C128 78 124 80 120 80H92V68Z" fill="white"/>
+          <rect x="40" y="84" width="52" height="10" rx="2" fill="white"/>
+          <rect x="40" y="108" width="52" height="10" rx="2" fill="white"/>
+        </svg>
+      </div>
+
+      <!-- RIYA wordmark -->
+      <div class="og-wordmark">RIYA</div>
+
+      <!-- Tagline -->
+      <div class="og-tagline">Fast, secure cross-border transfers</div>
+
+    </div>
+  </div>
+
+  <!-- Export instructions -->
+  <div class="instructions">
+    <div class="step">
+      <div class="step-num">Option 1 — Browser Screenshot</div>
+      <div class="step-text">
+        Right-click the image above and choose <strong>"Save Image As…"</strong>.
+        Not all browsers support this for div elements — use Option 2 for reliability.
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">Option 2 — DevTools Node Screenshot</div>
+      <div class="step-text">
+        Open DevTools (F12) → Elements → find <strong>#og-image</strong> → right-click → <strong>"Capture node screenshot"</strong>. Works in Chrome and Edge. Exports at full 1200×630px.
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">Option 3 — CLI (svg → png)</div>
+      <div class="step-text">
+        Convert <strong>og-image.svg</strong> directly using:<br>
+        <code style="font-size:11px; color:#818CF8;">npx svgexport og-image.svg og-image.png 1200:630</code><br>
+        or use Figma / Sketch import.
+        <div class="dim">
+          <span class="dim-badge">1200 × 630 px</span>
+          <span class="dim-badge">og:image</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
