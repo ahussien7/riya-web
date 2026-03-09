@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Pay via Riya</title>
+  <meta name="apple-itunes-app" content="app-id=YOUR_APP_ID">
+  <meta name="theme-color" content="#312E81">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Payment Request via Riya">
+  <meta property="og:description" content="Someone is requesting a payment through Riya — fast, secure cross-border transfers.">
+  <meta property="og:image" content="https://pay.riyapay.com/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple-900: #1E1B4B;
+      --purple-800: #312E81;
+      --purple-700: #3730A3;
+      --purple-600: #4338CA;
+      --purple-500: #4F46E5;
+      --purple-400: #6366F1;
+      --purple-300: #818CF8;
+      --purple-200: #A5B4FC;
+      --white: #FFFFFF;
+      --w95: rgba(255,255,255,.95);
+      --w80: rgba(255,255,255,.80);
+      --w60: rgba(255,255,255,.60);
+      --w40: rgba(255,255,255,.40);
+      --w20: rgba(255,255,255,.20);
+      --w12: rgba(255,255,255,.12);
+      --w08: rgba(255,255,255,.08);
+      --w05: rgba(255,255,255,.05);
+      --green: #34D399;
+      --green-bg: rgba(52,211,153,.12);
+      --red: #FB7185;
+      --red-bg: rgba(251,113,133,.12);
+    }
+
+    html {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      color: var(--white);
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px env(safe-area-inset-bottom, 24px);
+      background: var(--purple-900);
+      overflow-x: hidden;
+    }
+
+    /* ── Layered gradient background ── */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg::before {
+      content: '';
+      position: absolute;
+      width: 140%;
+      height: 60%;
+      top: -20%;
+      left: -20%;
+      background: radial-gradient(ellipse at center, var(--purple-500) 0%, transparent 70%);
+      opacity: 0.5;
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+
+    .bg::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 50%;
+      bottom: -10%;
+      right: -20%;
+      background: radial-gradient(ellipse at center, var(--purple-600) 0%, transparent 70%);
+      opacity: 0.25;
+      animation: bgPulse 10s ease-in-out 2s infinite alternate;
+    }
+
+    @keyframes bgPulse {
+      from { transform: scale(1) translateY(0); }
+      to { transform: scale(1.05) translateY(-8px); }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--purple-400);
+      top: 10%;
+      left: -10%;
+      animation-duration: 14s;
+    }
+
+    .orb-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--purple-300);
+      bottom: 15%;
+      right: -5%;
+      animation-duration: 10s;
+      animation-delay: 3s;
+    }
+
+    .orb-3 {
+      width: 150px;
+      height: 150px;
+      background: var(--purple-200);
+      top: 50%;
+      left: 60%;
+      animation-duration: 16s;
+      animation-delay: 5s;
+      opacity: 0.08;
+    }
+
+    @keyframes orbFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(20px, -20px) scale(1.1); }
+    }
+
+    /* Noise grain */
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 24px;
+      border: 1px solid var(--w12);
+      overflow: hidden;
+      animation: cardEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      background: linear-gradient(170deg,
+        rgba(67, 56, 202, 0.65) 0%,
+        rgba(55, 48, 163, 0.55) 50%,
+        rgba(49, 46, 129, 0.6) 100%);
+      backdrop-filter: blur(40px) saturate(1.4);
+      -webkit-backdrop-filter: blur(40px) saturate(1.4);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.05) inset,
+        0 1px 0 rgba(255,255,255,0.08) inset,
+        0 4px 16px rgba(0,0,0,0.12),
+        0 16px 64px rgba(0,0,0,0.18);
+    }
+
+    @keyframes cardEnter {
+      from {
+        opacity: 0;
+        transform: translateY(32px) scale(0.96);
+        filter: blur(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .card-body {
+      padding: 44px 36px 36px;
+      text-align: center;
+    }
+
+    /* ── Brand ── */
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.6s 0.15s both;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.1) inset;
+      flex-shrink: 0;
+    }
+
+    .brand-icon svg { width: 100%; height: 100%; display: block; }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ── Avatar ── */
+    .avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--w08);
+      border: 2px solid var(--w20);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 auto 24px;
+      animation: fadeUp 0.6s 0.25s both;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    /* ── Text ── */
+    .requester {
+      font-size: 16px;
+      color: var(--w60);
+      margin-bottom: 2px;
+      font-weight: 400;
+      animation: fadeUp 0.6s 0.3s both;
+    }
+
+    .requester strong {
+      color: var(--w95);
+      font-weight: 600;
+    }
+
+    .label-requesting {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--w40);
+      font-weight: 500;
+      margin-bottom: 6px;
+      animation: fadeUp 0.6s 0.3s both;
+    }
+
+    .amount-wrap {
+      animation: fadeUp 0.6s 0.35s both;
+      margin: 16px 0 8px;
+    }
+
+    .amount {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -2.5px;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .amount .currency {
+      font-size: 32px;
+      font-weight: 600;
+      vertical-align: top;
+      margin-right: 2px;
+      color: var(--w60);
+      letter-spacing: -1px;
+      position: relative;
+      top: 4px;
+    }
+
+    .amount .decimals {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--w60);
+      letter-spacing: -1px;
+    }
+
+    .note {
+      font-size: 14px;
+      color: var(--w40);
+      margin-top: 8px;
+      font-weight: 400;
+      animation: fadeUp 0.6s 0.38s both;
+    }
+
+    .note-inner {
+      display: inline-block;
+      padding: 6px 16px;
+      background: var(--w05);
+      border-radius: 20px;
+      border: 1px solid var(--w08);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--w12), transparent);
+      margin: 32px 0 28px;
+      animation: fadeUp 0.6s 0.4s both;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      display: block;
+      width: 100%;
+      padding: 18px 24px;
+      background: var(--white);
+      color: var(--purple-600);
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      animation: fadeUp 0.6s 0.45s both;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.9) inset;
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.9) inset;
+    }
+
+    .cta:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    /* ── Stores ── */
+    .stores {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      animation: fadeUp 0.6s 0.5s both;
+    }
+
+    .store-badge {
+      flex: 1;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--w05);
+      border: 1px solid var(--w08);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+
+    .store-badge:hover {
+      background: var(--w12);
+      border-color: var(--w20);
+      transform: translateY(-1px);
+    }
+
+    .store-badge:active { transform: translateY(0); }
+
+    .store-badge svg { flex-shrink: 0; }
+
+    .store-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .store-text small {
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--w40);
+      letter-spacing: 0.2px;
+    }
+
+    .store-text strong {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--w95);
+    }
+
+    /* ── Secondary ── */
+    .secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--w40);
+      font-weight: 400;
+      animation: fadeUp 0.6s 0.55s both;
+    }
+
+    .secondary a {
+      color: var(--w80);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .secondary a:hover { color: var(--white); text-decoration: underline; }
+
+    /* ── Status ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 16px;
+      animation: fadeUp 0.6s 0.4s both;
+    }
+
+    .status-badge.paid { background: var(--green-bg); color: var(--green); }
+    .status-badge.expired { background: var(--red-bg); color: var(--red); }
+
+    .status-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-badge.paid .dot {
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ── Footer ── */
+    .card-footer {
+      background: var(--w05);
+      border-top: 1px solid var(--w08);
+      padding: 16px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .card-footer svg { color: var(--w40); flex-shrink: 0; }
+
+    .card-footer span {
+      font-size: 12px;
+      color: var(--w40);
+      font-weight: 500;
+      letter-spacing: 0.1px;
+    }
+
+    /* ── Loading ── */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 72px 36px;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 2.5px solid var(--w12);
+      border-top-color: var(--w80);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { font-size: 14px; color: var(--w40); font-weight: 400; }
+
+    /* ── Error/Expired ── */
+    .state-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      animation: fadeUp 0.6s 0.2s both;
+    }
+
+    .state-icon.expired-icon { background: var(--red-bg); }
+    .state-icon.error-icon { background: var(--w08); }
+
+    .state-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--w95);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+      animation: fadeUp 0.6s 0.25s both;
+    }
+
+    .state-text {
+      font-size: 14px;
+      color: var(--w40);
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fadeUp 0.6s 0.3s both;
+    }
+
+    /* ── Page footer ── */
+    .page-footer {
+      position: relative;
+      z-index: 2;
+      margin-top: 28px;
+      text-align: center;
+      animation: fadeUp 0.6s 0.65s both;
+    }
+
+    .page-footer a {
+      font-size: 12px;
+      color: var(--w20);
+      text-decoration: none;
+      margin: 0 14px;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+
+    .page-footer a:hover { color: var(--w40); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+      body { padding: 16px 14px env(safe-area-inset-bottom, 16px); }
+      .card { border-radius: 22px; }
+      .card-body { padding: 36px 28px 30px; }
+      .card-footer { padding: 14px 28px; }
+      .brand-icon { width: 38px; height: 38px; border-radius: 11px; }
+      .brand-name { font-size: 20px; letter-spacing: 2.5px; }
+      .avatar { width: 60px; height: 60px; font-size: 22px; margin-bottom: 20px; }
+      .amount { font-size: 48px; }
+      .amount .currency { font-size: 28px; top: 3px; }
+      .amount .decimals { font-size: 28px; }
+      .cta { padding: 16px 20px; font-size: 16px; border-radius: 14px; }
+      .stores { gap: 8px; }
+      .store-badge { height: 48px; border-radius: 12px; }
+      .store-text strong { font-size: 13px; }
+    }
+
+    @media (max-width: 360px) {
+      .card-body { padding: 28px 22px 26px; }
+      .amount { font-size: 42px; letter-spacing: -2px; }
+      .amount .currency { font-size: 24px; }
+      .brand { margin-bottom: 32px; gap: 10px; }
+      .brand-name { font-size: 18px; }
+      .stores { flex-direction: column; }
+      .store-badge { max-width: none; }
+    }
+
+    /* ── Tall screens — fill space nicely ── */
+    @media (min-height: 800px) {
+      .card-body { padding: 48px 40px 40px; }
+      .brand { margin-bottom: 44px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background layers -->
+  <div class="bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="noise"></div>
+
+  <div class="card" id="card">
+
+    <!-- Loading -->
+    <div class="loading" id="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading payment request...</div>
+    </div>
+
+    <!-- Active -->
+    <div class="card-body hidden" id="payment-state">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="sq"><rect width="100" height="100" rx="22.5"/></clipPath></defs><rect width="100" height="100" rx="22.5" fill="#4F46E5"/><g clip-path="url(#sq)" opacity="0.3"><g transform="translate(10,12) rotate(-5)"><rect width="7" height="4.5" rx=".5" fill="#3C3B6E"/><rect y="1.5" width="7" height=".8" fill="#B22234"/><rect y="3" width="7" height=".8" fill="#B22234"/></g><g transform="translate(55,7) rotate(3)"><rect width="7" height="4.5" rx=".5" fill="#003399"/><circle cx="3.5" cy="2.25" r="1" fill="#FFCC00"/></g><g transform="translate(88,15) rotate(8)"><rect width="7" height="4.5" rx=".5" fill="white"/><circle cx="3.5" cy="2.25" r="1.2" fill="#BC002D"/></g><g transform="translate(7,35) rotate(-12)"><rect width="7" height="1.5" fill="#FF9933"/><rect y="1.5" width="7" height="1.5" fill="#FFF"/><rect y="3" width="7" height="1.5" fill="#138808"/></g><g transform="translate(92,55) rotate(5)"><rect width="7" height="4.5" rx=".5" fill="#00247D"/><path d="M0 0L7 4.5M7 0L0 4.5" stroke="white" stroke-width=".6"/></g><g transform="translate(20,88) rotate(-8)"><rect width="2.3" height="4.5" fill="#006847"/><rect x="2.3" width="2.4" height="4.5" fill="#FFF"/><rect x="4.7" width="2.3" height="4.5" fill="#CE1126"/></g><g transform="translate(75,90) rotate(10)"><rect width="7" height="1.5" fill="#000"/><rect y="1.5" width="7" height="1.5" fill="#DD0000"/><rect y="3" width="7" height="1.5" fill="#FFCE00"/></g><g transform="translate(40,92) rotate(-3)"><rect width="2.3" height="4.5" fill="#0055A4"/><rect x="2.3" width="2.4" height="4.5" fill="#FFF"/><rect x="4.7" width="2.3" height="4.5" fill="#EF4135"/></g></g><g><path d="M28 22V78H46V55H52L66 78H85L68 50C76 46 80 38 80 30C80 22 72 18 60 18H28ZM46 34H60C62 34 64 35 64 37C64 39 62 40 60 40H46V34Z" fill="white"/><rect x="20" y="42" width="26" height="5" rx="1" fill="white"/><rect x="20" y="54" width="26" height="5" rx="1" fill="white"/></g></svg>
+        </div>
+        <div class="brand-name">Riya</div>
+      </div>
+
+      <div class="avatar" id="avatar">A</div>
+      <div class="label-requesting">Requesting payment</div>
+      <div class="requester"><strong id="requester-name">Ahmed</strong></div>
+
+      <div class="amount-wrap">
+        <div class="amount">
+          <span class="currency">$</span><span id="amount-value">50</span><span class="decimals" id="amount-decimals"></span>
+        </div>
+      </div>
+      <div class="note hidden" id="note"><span class="note-inner" id="note-inner"></span></div>
+
+      <div class="divider"></div>
+
+      <a class="cta" id="cta-button" href="#">Open in Riya</a>
+
+      <div class="stores">
+        <a class="store-badge" href="https://apps.apple.com/app/riya/idYOUR_APP_ID" target="_blank" rel="noopener">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <span class="store-text"><small>Download on the</small><strong>App Store</strong></span>
+        </a>
+        <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.riya.app" target="_blank" rel="noopener">
+          <svg width="20" height="22" viewBox="0 0 20 22" fill="none"><path d="M1.13.98C.87 1.26.72 1.7.72 2.28v17.44c0 .58.15 1.02.41 1.3l.07.07L11.54 10.7v-.2L1.2.91 1.13.98z" fill="#4285F4"/><path d="M15 14.26l-3.47-3.47v-.38L15 7.14l.08.05 4.1 2.33c1.17.66 1.17 1.75 0 2.42l-4.1 2.33-.08-.01z" fill="#FFBA00"/><path d="M15.08 14.22L11.53 10.5 1.13 21.02c.39.41 1.03.46 1.76.05l12.19-6.85" fill="#F14336"/><path d="M15.08 6.78L2.89.05C2.16-.42 1.52-.31 1.13.1l10.4 10.4 3.55-3.72z" fill="#0F9D58"/></svg>
+          <span class="store-text"><small>Get it on</small><strong>Google Play</strong></span>
+        </a>
+      </div>
+
+      <div class="secondary">Don't have Riya? <a href="https://apps.apple.com/app/riya/idYOUR_APP_ID">Download free</a></div>
+    </div>
+
+    <!-- Paid -->
+    <div class="card-body hidden" id="paid-state">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22.5" fill="#4F46E5"/><g><path d="M28 22V78H46V55H52L66 78H85L68 50C76 46 80 38 80 30C80 22 72 18 60 18H28ZM46 34H60C62 34 64 35 64 37C64 39 62 40 60 40H46V34Z" fill="white"/><rect x="20" y="42" width="26" height="5" rx="1" fill="white"/><rect x="20" y="54" width="26" height="5" rx="1" fill="white"/></g></svg>
+        </div>
+        <div class="brand-name">Riya</div>
+      </div>
+      <div class="avatar" id="paid-avatar">A</div>
+      <div class="label-requesting">Payment to</div>
+      <div class="requester"><strong id="paid-name">Ahmed</strong></div>
+      <div class="amount-wrap">
+        <div class="amount"><span class="currency">$</span><span id="paid-amount">50</span></div>
+      </div>
+      <div class="status-badge paid"><span class="dot"></span> Paid successfully</div>
+    </div>
+
+    <!-- Expired -->
+    <div class="card-body hidden" id="expired-state">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22.5" fill="#4F46E5"/><g><path d="M28 22V78H46V55H52L66 78H85L68 50C76 46 80 38 80 30C80 22 72 18 60 18H28ZM46 34H60C62 34 64 35 64 37C64 39 62 40 60 40H46V34Z" fill="white"/><rect x="20" y="42" width="26" height="5" rx="1" fill="white"/><rect x="20" y="54" width="26" height="5" rx="1" fill="white"/></g></svg>
+        </div>
+        <div class="brand-name">Riya</div>
+      </div>
+      <div class="state-icon expired-icon">&#8987;</div>
+      <div class="state-title">Request expired</div>
+      <div class="state-text">This payment request is no longer active.<br>Ask the sender for a new link.</div>
+    </div>
+
+    <!-- Error -->
+    <div class="card-body hidden" id="error-state">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22.5" fill="#4F46E5"/><g><path d="M28 22V78H46V55H52L66 78H85L68 50C76 46 80 38 80 30C80 22 72 18 60 18H28ZM46 34H60C62 34 64 35 64 37C64 39 62 40 60 40H46V34Z" fill="white"/><rect x="20" y="42" width="26" height="5" rx="1" fill="white"/><rect x="20" y="54" width="26" height="5" rx="1" fill="white"/></g></svg>
+        </div>
+        <div class="brand-name">Riya</div>
+      </div>
+      <div class="state-icon error-icon">&#128533;</div>
+      <div class="state-title">Something went wrong</div>
+      <div class="state-text">We couldn't load this payment request.<br>Please check the link and try again.</div>
+    </div>
+
+    <div class="card-footer">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Secured by Riya &middot; End-to-end encrypted</span>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <a href="/terms">Terms</a>
+    <a href="/privacy">Privacy</a>
+    <a href="https://riyapay.com">riyapay.com</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+    const APP_SCHEME = 'riya://';
+    const pathParts = window.location.pathname.split('/');
+    const shortCode = pathParts[pathParts.length - 1];
+    const $ = id => document.getElementById(id);
+    const states = ['loading-state','payment-state','paid-state','expired-state','error-state'];
+    function show(id) { states.forEach(s => $(s).classList.toggle('hidden', s !== id)); }
+
+    if (shortCode && shortCode !== 'index.html' && shortCode !== 'r') {
+      window.location.href = `${APP_SCHEME}pay/${shortCode}`;
+      setTimeout(load, 800);
+    } else {
+      show('error-state');
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/get-payment-request?code=${encodeURIComponent(shortCode)}`);
+        if (!res.ok) { show('error-state'); return; }
+        const d = await res.json();
+        const initial = d.creator_name.charAt(0).toUpperCase();
+
+        if (d.status === 'paid') {
+          $('paid-avatar').textContent = initial;
+          $('paid-name').textContent = d.creator_name;
+          $('paid-amount').textContent = fmt(d.amount).whole;
+          show('paid-state'); return;
+        }
+
+        if (d.status === 'expired' || d.status === 'cancelled') {
+          show('expired-state'); return;
+        }
+
+        $('avatar').textContent = initial;
+        $('requester-name').textContent = d.creator_name;
+        const f = fmt(d.amount);
+        $('amount-value').textContent = f.whole;
+        if (f.dec) $('amount-decimals').textContent = '.' + f.dec;
+
+        if (d.note) {
+          $('note-inner').textContent = '\u201C' + d.note + '\u201D';
+          $('note').classList.remove('hidden');
+        }
+
+        const cta = $('cta-button');
+        cta.href = `${APP_SCHEME}pay/${shortCode}`;
+        cta.textContent = `Pay $${f.whole}${f.dec ? '.' + f.dec : ''} in Riya`;
+        show('payment-state');
+      } catch (e) { show('error-state'); }
+    }
+
+    function fmt(a) {
+      const n = parseFloat(a);
+      if (Number.isInteger(n)) return { whole: n.toString(), dec: '' };
+      const parts = n.toFixed(2).split('.');
+      return { whole: parts[0], dec: parts[1] };
+    }
+  </script>
+</body>
+</html>
