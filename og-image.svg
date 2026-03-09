@@ -18,9 +18,9 @@
       <feGaussianBlur stdDeviation="50"/>
     </filter>
 
-    <!-- Logo clip -->
+    <!-- Logo clip path (120x120 rounded rect) -->
     <clipPath id="logo-clip">
-      <rect width="200" height="200" rx="45" x="0" y="0"/>
+      <rect width="120" height="120" rx="27"/>
     </clipPath>
   </defs>
 
@@ -28,90 +28,112 @@
   <rect width="1200" height="630" fill="url(#bg)"/>
 
   <!-- Radial top glow -->
-  <ellipse cx="600" cy="-80" rx="700" ry="340" fill="#4F46E5" opacity="0.45"/>
+  <ellipse cx="600" cy="-60" rx="700" ry="300" fill="#4F46E5" opacity="0.45"/>
 
   <!-- Radial bottom-right glow -->
-  <ellipse cx="1050" cy="700" rx="500" ry="280" fill="#4338CA" opacity="0.22"/>
+  <ellipse cx="1050" cy="690" rx="500" ry="260" fill="#4338CA" opacity="0.22"/>
 
   <!-- Floating orb 1 — top-left -->
-  <circle cx="-60" cy="110" r="280" fill="#6366F1" opacity="0.14" filter="url(#orb1-blur)"/>
+  <circle cx="-40" cy="130" r="260" fill="#6366F1" opacity="0.14" filter="url(#orb1-blur)"/>
 
   <!-- Floating orb 2 — bottom-right -->
-  <circle cx="1220" cy="530" r="200" fill="#818CF8" opacity="0.12" filter="url(#orb2-blur)"/>
+  <circle cx="1230" cy="520" r="190" fill="#818CF8" opacity="0.12" filter="url(#orb2-blur)"/>
 
   <!-- Floating orb 3 — mid-right -->
-  <circle cx="1050" cy="180" r="160" fill="#A5B4FC" opacity="0.07" filter="url(#orb3-blur)"/>
+  <circle cx="1060" cy="160" r="150" fill="#A5B4FC" opacity="0.07" filter="url(#orb3-blur)"/>
 
   <!-- Floating orb 4 — bottom-left -->
-  <circle cx="120" cy="560" r="180" fill="#6366F1" opacity="0.09" filter="url(#orb2-blur)"/>
+  <circle cx="110" cy="560" r="170" fill="#6366F1" opacity="0.09" filter="url(#orb2-blur)"/>
 
-  <!-- ─── Logo icon — centered at 600,215 ─── -->
-  <!-- Logo container: 200x200 rounded rect -->
-  <g transform="translate(500, 115)">
-    <!-- Background rect with clip -->
-    <rect width="200" height="200" rx="45" fill="#4F46E5"/>
-    <rect width="200" height="200" rx="45" fill="white" opacity="0.06"/>
+  <!--
+    Content group — vertically centered in 630px height.
 
-    <!-- Flag decorations (scaled 2x from original 100x100 viewBox) -->
+    Layout:
+      Logo icon:  120 x 120  (top at y=195, center at y=255)
+      Gap:        28px
+      RIYA text:  ~52px cap-height  (baseline at y=395)
+      Gap:        18px
+      Tagline:    ~22px cap-height  (baseline at y=435)
+
+    Total content height: 120 + 28 + 52 + 18 + 22 = 240px
+    Vertical padding:     (630 - 240) / 2 = 195px  →  logo top at y=195
+    Horizontal center:    x=600
+  -->
+
+  <!-- Logo icon — 120x120, top-left corner at (540, 195) -->
+  <g transform="translate(540, 195)">
+    <!-- Rounded square background -->
+    <rect width="120" height="120" rx="27" fill="#4F46E5" clip-path="url(#logo-clip)"/>
+    <rect width="120" height="120" rx="27" fill="white" opacity="0.06" clip-path="url(#logo-clip)"/>
+
+    <!--
+      Flag decorations — scaled from the 100x100 brand-icon viewBox.
+      Original positions × 1.2 to fill the 120x120 box.
+    -->
     <g opacity="0.30">
       <!-- US flag — top-left -->
-      <g transform="translate(20,24) rotate(-5) scale(2)">
+      <g transform="translate(12,14.4) rotate(-5) scale(1.2)">
         <rect width="7" height="4.5" rx=".5" fill="#3C3B6E"/>
         <rect y="1.5" width="7" height=".8" fill="#B22234"/>
         <rect y="3" width="7" height=".8" fill="#B22234"/>
       </g>
       <!-- EU flag — top-right area -->
-      <g transform="translate(110,14) rotate(3) scale(2)">
+      <g transform="translate(66,8.4) rotate(3) scale(1.2)">
         <rect width="7" height="4.5" rx=".5" fill="#003399"/>
         <circle cx="3.5" cy="2.25" r="1" fill="#FFCC00"/>
       </g>
       <!-- Japan flag -->
-      <g transform="translate(176,30) rotate(8) scale(2)">
+      <g transform="translate(105.6,18) rotate(8) scale(1.2)">
         <rect width="7" height="4.5" rx=".5" fill="white"/>
         <circle cx="3.5" cy="2.25" r="1.2" fill="#BC002D"/>
       </g>
       <!-- India flag -->
-      <g transform="translate(14,70) rotate(-12) scale(2)">
+      <g transform="translate(8.4,42) rotate(-12) scale(1.2)">
         <rect width="7" height="1.5" fill="#FF9933"/>
         <rect y="1.5" width="7" height="1.5" fill="#FFF"/>
         <rect y="3" width="7" height="1.5" fill="#138808"/>
       </g>
       <!-- UK flag -->
-      <g transform="translate(184,110) rotate(5) scale(2)">
+      <g transform="translate(110.4,66) rotate(5) scale(1.2)">
         <rect width="7" height="4.5" rx=".5" fill="#00247D"/>
         <path d="M0 0L7 4.5M7 0L0 4.5" stroke="white" stroke-width=".6"/>
       </g>
       <!-- Mexico flag -->
-      <g transform="translate(40,176) rotate(-8) scale(2)">
+      <g transform="translate(24,105.6) rotate(-8) scale(1.2)">
         <rect width="2.3" height="4.5" fill="#006847"/>
         <rect x="2.3" width="2.4" height="4.5" fill="#FFF"/>
         <rect x="4.7" width="2.3" height="4.5" fill="#CE1126"/>
       </g>
       <!-- Germany flag -->
-      <g transform="translate(150,180) rotate(10) scale(2)">
+      <g transform="translate(90,108) rotate(10) scale(1.2)">
         <rect width="7" height="1.5" fill="#000"/>
         <rect y="1.5" width="7" height="1.5" fill="#DD0000"/>
         <rect y="3" width="7" height="1.5" fill="#FFCE00"/>
       </g>
       <!-- France flag -->
-      <g transform="translate(80,184) rotate(-3) scale(2)">
+      <g transform="translate(48,110.4) rotate(-3) scale(1.2)">
         <rect width="2.3" height="4.5" fill="#0055A4"/>
         <rect x="2.3" width="2.4" height="4.5" fill="#FFF"/>
         <rect x="4.7" width="2.3" height="4.5" fill="#EF4135"/>
       </g>
     </g>
 
-    <!-- R letter mark (scaled 2x from 100x100 to 200x200 viewBox) -->
-    <path d="M56 44V156H92V110H104L132 156H170L136 100C152 92 160 76 160 60C160 44 144 36 120 36H56ZM92 68H120C124 68 128 70 128 74C128 78 124 80 120 80H92V68Z" fill="white"/>
-    <rect x="40" y="84" width="52" height="10" rx="2" fill="white"/>
-    <rect x="40" y="108" width="52" height="10" rx="2" fill="white"/>
+    <!--
+      R lettermark — path originally drawn for a 100x100 viewBox.
+      Scaled to 120x120 via nested SVG preserving the brand-icon source exactly.
+    -->
+    <svg x="0" y="0" width="120" height="120" viewBox="0 0 100 100">
+      <path d="M28 22V78H46V55H52L66 78H85L68 50C76 46 80 38 80 30C80 22 72 18 60 18H28ZM46 34H60C62 34 64 35 64 37C64 39 62 40 60 40H46V34Z" fill="white"/>
+      <rect x="20" y="42" width="26" height="5" rx="1" fill="white"/>
+      <rect x="20" y="54" width="26" height="5" rx="1" fill="white"/>
+    </svg>
   </g>
 
-  <!-- "RIYA" wordmark -->
+  <!-- "RIYA" wordmark — baseline at y=395, centered at x=600 -->
   <text
     x="600"
-    y="378"
-    font-family="'DM Sans', system-ui, -apple-system, Helvetica Neue, sans-serif"
+    y="395"
+    font-family="'DM Sans', system-ui, -apple-system, 'Helvetica Neue', sans-serif"
     font-size="52"
     font-weight="800"
     fill="white"
@@ -120,11 +142,11 @@
     dominant-baseline="auto"
   >RIYA</text>
 
-  <!-- Tagline -->
+  <!-- Tagline — baseline at y=435, centered at x=600 -->
   <text
     x="600"
-    y="428"
-    font-family="'DM Sans', system-ui, -apple-system, Helvetica Neue, sans-serif"
+    y="435"
+    font-family="'DM Sans', system-ui, -apple-system, 'Helvetica Neue', sans-serif"
     font-size="22"
     font-weight="400"
     fill="rgba(255,255,255,0.60)"
