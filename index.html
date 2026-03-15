@@ -3,30 +3,744 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Riya — Fast, Secure Cross-Border Transfers</title>
-  <meta name="theme-color" content="#312E81">
-  <meta http-equiv="refresh" content="0;url=https://apps.apple.com/app/riya/idYOUR_APP_ID">
+  <title>Riya — Send Money Everywhere</title>
+  <meta name="description" content="Riya makes cross-border transfers instant, transparent, and affordable. Powered by stablecoins.">
+  <meta property="og:title" content="Riya — Send Money Everywhere">
+  <meta property="og:description" content="Cross-border transfers, reimagined. Coming soon.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://riyapay.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Unbounded:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      min-height: 100dvh;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #FAF3E6;
+      color: #111;
+    }
+
+    .page {
+      position: relative;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── Nav ─── */
+    .nav {
+      position: absolute;
+      z-index: 20;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 56px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+    .logo-box {
+      width: 48px; height: 48px;
+      border-radius: 13px;
+      background: #111;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #1E1B4B;
-      font-family: system-ui, -apple-system, sans-serif;
-      color: white;
-      text-align: center;
-      padding: 24px;
     }
-    a { color: #A5B4FC; }
+    .logo-box span {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      color: #FAF3E6;
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+    .nav-wordmark {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      color: #111;
+      letter-spacing: -0.5px;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .nav-right a {
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(17,17,17,0.4);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-right a:hover { color: #111; }
+
+    /* ─── Canvas background ─── */
+    #bg-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%; height: 100%;
+    }
+
+    /* Cursor glow */
+    .cursor-glow {
+      position: fixed;
+      z-index: 0;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(17,17,17,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: left 0.3s ease, top 0.3s ease;
+    }
+
+    /* ─── Content ─── */
+    .content {
+      position: absolute;
+      z-index: 10;
+      left: 0; top: 0; bottom: 0;
+      width: 52%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 56px 60px;
+    }
+
+    h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 800;
+      font-size: clamp(40px, 4.8vw, 72px);
+      line-height: 1.0;
+      letter-spacing: -3px;
+      color: #111;
+      margin-bottom: 24px;
+    }
+    h1 .line {
+      display: block;
+      opacity: 0;
+      transform: translateY(32px);
+      animation: slideUp 0.7s ease forwards;
+    }
+    h1 .line:nth-child(1) { animation-delay: 0.1s; }
+    h1 .line:nth-child(2) { animation-delay: 0.3s; }
+    h1 .line:nth-child(3) { animation-delay: 0.5s; }
+    .h1-highlight {
+      position: relative;
+      display: inline-block;
+    }
+    .rotating-word {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+    .rotating-word .word {
+      display: block;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+    .rotating-word .word.exit {
+      position: absolute;
+      top: 0; left: 0;
+      transform: translateY(-110%);
+      opacity: 0;
+    }
+    .rotating-word .word.enter {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .rotating-word .word.waiting {
+      position: absolute;
+      top: 0; left: 0;
+      transform: translateY(110%);
+      opacity: 0;
+    }
+    .h1-highlight::after {
+      content: '';
+      position: absolute;
+      left: -4px;
+      bottom: 2px;
+      height: 0.32em;
+      background: #111;
+      opacity: 0.1;
+      border-radius: 4px;
+      z-index: -1;
+      width: 0;
+      animation: expandBar 0.6s ease forwards;
+      animation-delay: 0.8s;
+    }
+    @keyframes expandBar {
+      to { width: calc(100% + 8px); }
+    }
+    .subtitle {
+      font-size: 18px;
+      line-height: 1.7;
+      color: rgba(17,17,17,0.38);
+      max-width: 420px;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 0.6s ease forwards;
+      animation-delay: 0.7s;
+    }
+
+    /* Waitlist */
+    .waitlist-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 400px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 0.6s ease forwards;
+      animation-delay: 0.9s;
+    }
+    .waitlist {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .waitlist input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1.5px solid rgba(17,17,17,0.08);
+      border-radius: 14px;
+      background: #fff;
+      color: #111;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .waitlist input::placeholder { color: rgba(17,17,17,0.22); }
+    .waitlist input:focus {
+      border-color: #111;
+      box-shadow: 0 0 0 3px rgba(17,17,17,0.06);
+    }
+    .waitlist button {
+      position: relative;
+      width: 100%;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 14px;
+      background: #111;
+      color: #FAF3E6;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+    .waitlist button::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      animation: btnShine 3s ease-in-out infinite;
+    }
+    @keyframes btnShine {
+      0%, 100% { left: -100%; }
+      50% { left: 140%; }
+    }
+    .waitlist button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(17,17,17,0.18);
+    }
+    .waitlist button:active { transform: translateY(0); }
+    .waitlist-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar-stack {
+      display: flex;
+    }
+    .avatar-dot {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid #FAF3E6;
+      margin-left: -6px;
+    }
+    .avatar-dot:first-child { margin-left: 0; }
+    .platform-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(17,17,17,0.3);
+    }
+    .platform-icon { flex-shrink: 0; }
+    .platform-divider {
+      width: 1px;
+      height: 12px;
+      background: rgba(17,17,17,0.12);
+    }
+    .waitlist-note {
+      font-size: 12px;
+      color: rgba(17,17,17,0.3);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* ─── Floating badges (anchored to globe) ─── */
+    .badge {
+      position: absolute;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid rgba(17,17,17,0.06);
+      box-shadow: 0 4px 20px rgba(17,17,17,0.07);
+      white-space: nowrap;
+      pointer-events: none;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .badge.visible { opacity: 1; transform: translateY(0); }
+    .badge .flag { font-size: 16px; line-height: 1; }
+    .badge .b-info { display: flex; flex-direction: column; }
+    .badge .amt {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #111;
+    }
+    .badge .route {
+      font-size: 10px;
+      color: rgba(17,17,17,0.3);
+      font-weight: 500;
+      margin-top: 1px;
+    }
+    .badge-connector {
+      position: absolute;
+      z-index: 14;
+      pointer-events: none;
+    }
+
+
+    /* ─── Bottom bar ─── */
+    .bottom-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 20px 56px;
+      font-size: 12px;
+      color: rgba(17,17,17,0.22);
+    }
+    .bottom-bar a {
+      color: rgba(17,17,17,0.28);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .bottom-bar a:hover { color: #111; }
+    .bottom-links { display: flex; gap: 24px; }
+
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1024px) {
+      .content {
+        width: 100%;
+        background: rgba(250,243,230,0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .b4 { display: none; }
+    }
+    @media (max-width: 600px) {
+      .nav { padding: 18px 20px; }
+      .logo-box { width: 38px; height: 38px; border-radius: 10px; }
+      .logo-box span { font-size: 20px; }
+      .nav-wordmark { font-size: 20px; }
+      .nav-right a { display: none; }
+      .content {
+        padding: 0 24px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      h1 { font-size: 36px; letter-spacing: -2px; }
+      .subtitle { font-size: 15px; margin-left: auto; margin-right: auto; }
+      .waitlist-wrap { max-width: 100%; align-items: center; }
+      .waitlist { width: 100%; }
+      .waitlist-footer { justify-content: center; }
+      .badge { display: none !important; }
+      .badge-connector { display: none !important; }
+      .cursor-glow { display: none; }
+      .bottom-bar { padding: 14px 24px; justify-content: center; }
+    }
   </style>
 </head>
 <body>
-  <div>
-    <h1>Riya</h1>
-    <p>Redirecting to the App Store...</p>
-    <p><a href="https://apps.apple.com/app/riya/idYOUR_APP_ID">Download Riya</a></p>
+  <div class="page">
+
+    <!-- Nav -->
+    <div class="nav">
+      <a href="#" class="nav-logo">
+        <div class="logo-box"><span>r.</span></div>
+        <span class="nav-wordmark">riya</span>
+      </a>
+      <div class="nav-right">
+        <a href="mailto:hello@riyapay.com">Contact</a>
+      </div>
+    </div>
+
+    <!-- Cursor glow -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Background canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Badges are rendered dynamically, anchored to globe cities -->
+
+    <!-- Content -->
+    <div class="content">
+      <h1><span class="line">Send money to</span><span class="line"><span class="h1-highlight"><span class="rotating-word" id="rotatingWord"><span class="word enter">everywhere.</span></span></span></span><span class="line">Instantly.</span></h1>
+      <p class="subtitle">Cross-border transfers without the fees, without the wait. Powered by stablecoins. Built for real people.</p>
+      <div class="waitlist-wrap">
+        <div class="waitlist">
+          <input type="email" placeholder="Enter your email" aria-label="Email for waitlist">
+          <button type="button">Join the Waitlist →</button>
+        </div>
+        <div class="waitlist-footer">
+          <div class="platform-badges">
+            <svg class="platform-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.79 22.05 6.8 20.68 5.96 19.47C4.25 16.56 2.93 11.3 4.7 7.72C5.57 5.94 7.36 4.86 9.28 4.84C10.56 4.81 11.78 5.7 12.56 5.7C13.34 5.7 14.85 4.63 16.4 4.8C17.07 4.83 18.89 5.08 20.04 6.78C19.93 6.85 17.53 8.27 17.56 11.18C17.59 14.67 20.55 15.82 20.58 15.83C20.55 15.91 20.1 17.55 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="currentColor"/></svg>
+            <span class="platform-divider"></span>
+            <svg class="platform-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3.609 1.814L13.792 12.001L3.61 22.186L3.609 22.186C2.823 21.293 2.354 20.085 2.354 18.612V5.388C2.354 3.916 2.823 2.707 3.609 1.814ZM14.852 13.06L5.071 22.839C5.689 23.088 6.388 23.099 7.087 22.823L18.124 16.657L14.852 13.06ZM19.146 15.913L21.119 14.81C22.294 14.156 22.294 13.091 21.119 12.437L19.265 11.402L15.906 12.001L19.146 15.913ZM18.07 10.657L7.087 4.523C6.388 4.248 5.689 4.258 5.071 4.508L14.852 14.293L18.07 10.657Z" fill="currentColor"/></svg>
+          </div>
+          <span class="waitlist-note">Coming soon to iOS & Android</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bottom-bar">
+      <div class="bottom-links">
+        <span>&copy; 2026 Riya Inc.</span>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
   </div>
+
+<script>
+// ─── Globe network graphic ───
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, time = 0, dpr;
+
+// Globe center
+let GX, GY, GR;
+
+// City positions on globe (angle in radians from center, distance from center as ratio of radius)
+const CITIES = [
+  { name: 'New York',    a: -0.45, d: 0.55, size: 8  },
+  { name: 'London',      a: -0.15, d: 0.35, size: 7  },
+  { name: 'Lagos',       a:  0.35, d: 0.65, size: 7  },
+  { name: 'Mexico City', a: -0.7,  d: 0.72, size: 6  },
+  { name: 'São Paulo',   a:  0.85, d: 0.78, size: 6  },
+  { name: 'Mumbai',      a:  0.2,  d: 0.58, size: 7  },
+  { name: 'Nairobi',     a:  0.55, d: 0.52, size: 5  },
+  { name: 'Manila',      a:  0.05, d: 0.82, size: 5  },
+];
+
+const ARCS = [
+  [0, 1], [0, 3], [0, 4], [1, 2], [1, 5], [2, 6], [5, 7], [0, 5], [3, 4], [6, 5],
+];
+
+// Badge data — anchored to specific city indices
+// offset: [x, y] offset from city node in px
+const BADGES = [
+  { city: 0, flag: '🇺🇸', amt: '$250.00', route: 'to Mexico',  ox: 20,  oy: -50 },
+  { city: 1, flag: '🇬🇧', amt: '£142.50', route: 'to Nigeria', ox: -120, oy: -45 },
+  { city: 5, flag: '🇮🇳', amt: '₹8,350',  route: 'to India',   ox: 22,  oy: -48 },
+  { city: 4, flag: '🇪🇺', amt: '€89.00',  route: 'to Brazil',  ox: -110, oy: -42 },
+];
+
+// Create badge DOM elements
+const badgeEls = BADGES.map((b, i) => {
+  const el = document.createElement('div');
+  el.className = 'badge';
+  el.innerHTML = `<span class="flag">${b.flag}</span><div class="b-info"><span class="amt">${b.amt}</span><span class="route">${b.route}</span></div>`;
+  document.querySelector('.page').appendChild(el);
+  // Stagger fade-in
+  setTimeout(() => el.classList.add('visible'), 600 + i * 300);
+  return el;
+});
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  GX = W * 0.72;
+  GY = H * 0.5;
+  GR = Math.min(W * 0.28, H * 0.38);
+  gx = GX;
+  gy = GY;
+}
+
+// Smoothed mouse values
+let smX = 0, smY = 0;
+let gx = 0, gy = 0;
+let mouseX = 0, mouseY = 0;
+
+function getCityPos(city) {
+  const wobbleX = Math.sin(time * 0.3 + city.a * 5) * 3;
+  const wobbleY = Math.cos(time * 0.25 + city.d * 5) * 3;
+  return {
+    x: gx + Math.cos(city.a * Math.PI) * city.d * GR + wobbleX,
+    y: gy + Math.sin(city.a * Math.PI) * city.d * GR + wobbleY,
+  };
+}
+
+function draw() {
+  time += 0.005;
+  ctx.clearRect(0, 0, W, H);
+
+  // Smooth mouse tracking
+  smX += (mouseX - smX) * 0.04;
+  smY += (mouseY - smY) * 0.04;
+  gx = GX + smX * 20;
+  gy = GY + smY * 15;
+
+  // ── Large globe circle ──
+  // Outer glow
+  const grd = ctx.createRadialGradient(gx, gy, GR * 0.8, gx, gy, GR * 1.3);
+  grd.addColorStop(0, 'rgba(17,17,17,0.03)');
+  grd.addColorStop(1, 'rgba(17,17,17,0)');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  // Main globe outline
+  ctx.beginPath();
+  ctx.arc(gx, gy, GR, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(17,17,17,0.08)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Inner rings (latitude lines)
+  for (let i = 1; i <= 4; i++) {
+    const r = GR * (i / 5);
+    ctx.beginPath();
+    ctx.arc(gx, gy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(17,17,17,${0.03 + i * 0.008})`;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // Meridian lines (vertical arcs through globe)
+  for (let i = 0; i < 3; i++) {
+    const angle = (i / 3) * Math.PI + time * 0.08;
+    ctx.beginPath();
+    ctx.ellipse(gx, gy, GR * Math.abs(Math.cos(angle)), GR, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(17,17,17,0.035)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // ── Arcs between cities ──
+  const positions = CITIES.map(c => getCityPos(c));
+
+  ARCS.forEach(([a, b], i) => {
+    const pa = positions[a];
+    const pb = positions[b];
+    const mx = (pa.x + pb.x) / 2;
+    const my = (pa.y + pb.y) / 2;
+    const dist = Math.hypot(pb.x - pa.x, pb.y - pa.y);
+    const dx = pb.x - pa.x, dy = pb.y - pa.y;
+    const nx = -dy / (dist || 1), ny = dx / (dist || 1);
+    const bulge = dist * 0.25;
+    const cpx = mx + nx * bulge;
+    const cpy = my + ny * bulge;
+
+    // Arc line
+    ctx.beginPath();
+    ctx.moveTo(pa.x, pa.y);
+    ctx.quadraticCurveTo(cpx, cpy, pb.x, pb.y);
+    ctx.strokeStyle = 'rgba(17,17,17,0.1)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    ctx.lineDashOffset = -time * 30;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Traveling dot
+    const t = ((time * 0.35 + i * 0.1) % 1);
+    const px = (1-t)*(1-t)*pa.x + 2*(1-t)*t*cpx + t*t*pb.x;
+    const py = (1-t)*(1-t)*pa.y + 2*(1-t)*t*cpy + t*t*pb.y;
+
+    // Dot glow
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(17,17,17,0.06)';
+    ctx.fill();
+
+    // Dot core
+    ctx.beginPath();
+    ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(17,17,17,0.35)';
+    ctx.fill();
+  });
+
+  // ── City nodes ──
+  positions.forEach((pos, i) => {
+    const city = CITIES[i];
+
+    // Pulse ring
+    const pulseT = ((time * 0.5 + i * 0.3) % 1);
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, city.size + pulseT * 24, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(17,17,17,${0.12 * (1 - pulseT)})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, city.size + 4, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(17,17,17,0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Node fill
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, city.size, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(17,17,17,0.12)';
+    ctx.fill();
+
+    // Inner core
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, city.size * 0.45, 0, Math.PI * 2);
+    ctx.fillStyle = '#111';
+    ctx.fill();
+
+    // City label
+    ctx.font = '600 11px "DM Sans", sans-serif';
+    ctx.fillStyle = 'rgba(17,17,17,0.3)';
+    ctx.textAlign = 'center';
+    ctx.fillText(city.name, pos.x, pos.y + city.size + 18);
+  });
+
+  // ── Decorative cross-hairs at globe center ──
+  ctx.beginPath();
+  ctx.moveTo(gx - 12, gy);
+  ctx.lineTo(gx + 12, gy);
+  ctx.moveTo(gx, gy - 12);
+  ctx.lineTo(gx, gy + 12);
+  ctx.strokeStyle = 'rgba(17,17,17,0.08)';
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+
+  // ── Position badges and draw connectors ──
+  BADGES.forEach((b, i) => {
+    const cityPos = positions[b.city];
+    const el = badgeEls[i];
+    const bx = cityPos.x + b.ox;
+    const by = cityPos.y + b.oy;
+
+    el.style.left = bx + 'px';
+    el.style.top = by + 'px';
+
+    // Connector line from badge to city node
+    const elRect = el.getBoundingClientRect();
+    const connX = bx + elRect.width / 2;
+    const connY = by + elRect.height;
+
+    ctx.beginPath();
+    ctx.moveTo(connX, connY);
+    ctx.lineTo(cityPos.x, cityPos.y);
+    ctx.strokeStyle = 'rgba(17,17,17,0.1)';
+    ctx.lineWidth = 0.8;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Small dot at connection point on badge
+    ctx.beginPath();
+    ctx.arc(connX, connY, 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(17,17,17,0.15)';
+    ctx.fill();
+  });
+
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+
+// ─── Cursor glow ───
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+
+  // Mouse parallax on globe
+  mouseX = (e.clientX / W - 0.5) * 2;
+  mouseY = (e.clientY / H - 0.5) * 2;
+});
+
+// ─── Rotating words ───
+const WORDS = ['everywhere.', 'Mexico.', 'Nigeria.', 'India.', 'Brazil.', 'London.', 'Kenya.', 'Manila.'];
+let wordIndex = 0;
+const rotatingEl = document.getElementById('rotatingWord');
+
+function rotateWord() {
+  const currentWord = rotatingEl.querySelector('.word.enter');
+  const nextIndex = (wordIndex + 1) % WORDS.length;
+
+  // Create next word
+  const nextWord = document.createElement('span');
+  nextWord.className = 'word waiting';
+  nextWord.textContent = WORDS[nextIndex];
+  rotatingEl.appendChild(nextWord);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    currentWord.className = 'word exit';
+    nextWord.className = 'word enter';
+  });
+
+  // Clean up old word
+  setTimeout(() => {
+    if (currentWord.parentNode) currentWord.remove();
+  }, 600);
+
+  wordIndex = nextIndex;
+}
+
+setTimeout(() => {
+  setInterval(rotateWord, 2200);
+}, 1500);
+</script>
 </body>
 </html>
