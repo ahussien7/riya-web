@@ -3,8 +3,8 @@
     "apps": [],
     "details": [
       {
-        "appID": "REPLACE_TEAM_ID.com.riya.app",
-        "paths": ["/r/*"]
+        "appID": "G88J4V5C37.com.riya.app",
+        "paths": ["/claim/*"]
       }
     ]
   }
